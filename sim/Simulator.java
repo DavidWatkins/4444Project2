@@ -35,7 +35,7 @@ class Simulator {
     private static long no_reproduce_turns = 100;
 
     // time per webgui frame
-    private static int refresh = 20;
+    private static int refresh = 40;
 
     // print messages to terminal
     private static boolean verbose = false;
@@ -57,7 +57,7 @@ class Simulator {
 
     private static int turns_without_reproduction = 0;
 
-    private static boolean log = true;
+    private static boolean log = false;
     
     
     private static boolean init() {
@@ -96,6 +96,8 @@ class Simulator {
 		}
 		players[g] = null;
 	    }
+	    if (players[g] != null)
+		players[g].init(d,t);
 	}
 	// check if there are any valid players
 	for (int g = 0 ; g < p ; g++)
@@ -153,8 +155,8 @@ class Simulator {
 			double theta = Math.toRadians((double) random.nextInt(360));
 			double dx = new_diameter * 0.5 * Math.cos(theta);
 			double dy = new_diameter * 0.5 * Math.sin(theta);
-			cells.get(i).move(new Point(dx, dy), nearby_pheromes, nearby_cells);
-			new_cell.move(new Point(-1*dx, -1*dy), nearby_pheromes, nearby_cells);
+			cells.get(i).move(new Point(dx, dy), nearby_pheromes, nearby_cells, log);
+			new_cell.move(new Point(-1*dx, -1*dy), nearby_pheromes, nearby_cells, log);
 			cells.get(i).memory = move.memory;
 			new_cell.memory = move.daughter_memory;
 			cells.add(new_cell);
@@ -170,7 +172,7 @@ class Simulator {
 			    readd = true;
 			    grid.remove(cells.get(i));
 			}
-			cells.get(i).move(move.vector, nearby_pheromes, nearby_cells);
+			cells.get(i).move(move.vector, nearby_pheromes, nearby_cells, log);
 			cells.get(i).memory = move.memory;
 			cells.get(i).step(nearby_pheromes, nearby_cells);
 			grid.add(cells.get(i).secrete(t));
@@ -289,14 +291,14 @@ class Simulator {
 			throw new IllegalArgumentException("Invalid game id");
 		    game_path = args[++a];
 		    play_path = args[++a];
-		} else if (args[a].equals("-v") || args[a].equals("--verbose"))
+		} else if (args[a].equals("-debug"))
 		    verbose = true;
 		else if (args[a].equals("--gui"))
 		    gui = true;
 		else if (args[a].equals("--recompile"))
 		    recompile = true;
-		else if (args[a].equals("--nolog"))
-		    log = false;
+		else if (args[a].equals("--verbose"))
+		    log = true;
 		else throw new IllegalArgumentException("Unknown argument: " + args[a]);
 	    if (groups == null)
 		throw new IllegalArgumentException("Missing group name parameter");

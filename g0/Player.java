@@ -9,10 +9,10 @@ import java.util.*;
 
 public class Player implements slather.sim.Player {
     
-    private Random gen = new Random();
+    private Random gen;
 
-    public void init(int d, int t) {
-
+    public void init(double d, int t) {
+	gen = new Random();
     }
 
     public Move play(Cell player_cell, byte memory, Set<Cell> nearby_cells, Set<Pherome> nearby_pheromes) {
@@ -26,7 +26,7 @@ public class Player implements slather.sim.Player {
 	}
 
 	// if no previous direction specified or if there was a collision, try random directions to go in until one doesn't collide
-	for (int i=0; i<20; i++) {
+	for (int i=0; i<4; i++) {
 	    int arg = gen.nextInt(180)+1;
 	    Point vector = extractVectorFromAngle(arg);
 	    if (!collides(player_cell, vector, nearby_cells, nearby_pheromes)) 
