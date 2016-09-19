@@ -1,7 +1,5 @@
 package slather.sim;
 
-import java.util.*;
-
 public abstract class GridObject {
     public final int player;
     protected Point position;

@@ -1,8 +1,8 @@
-package slather.sim;
+package slather;
 
 import java.util.concurrent.*;
 
-class Timer extends Thread {
+public class Timer extends Thread {
 
 	private boolean start = false;
 	private boolean finished = false;
