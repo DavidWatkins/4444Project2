@@ -6,8 +6,8 @@ public class Pherome extends GridObject{
     private int duration = 0;
     
     public Pherome(Point position, int player, int max_duration) {
-	super(position, player);
-	this.max_duration = max_duration;
+        super(position, player);
+        this.max_duration = max_duration;
     }
 
     public double distance(GridObject other) {
