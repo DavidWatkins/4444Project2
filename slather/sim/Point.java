@@ -28,9 +28,5 @@ public class Point {
     protected static void set_side_length(int new_side_length) {
         side_length = new_side_length;
     }
-
-    public String toString() {
-        return "Point(" + this.x + "," + this.y + ")";
-    }
     
 }
