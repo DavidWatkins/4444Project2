@@ -23,7 +23,7 @@ public class Player implements slather.sim.Player {
 
 	public Move play(Cell player_cell, byte memory, Set<Cell> nearby_cells, Set<Pherome> nearby_pheromes) {
 		if (player_cell.getDiameter() >= 2) // reproduce whenever possible
-			return new Move(true, (byte)-1, (byte)-1);
+		return new Move(true, (byte)-1, (byte)-1);
 
 		List<Vector> vectors = new ArrayList<>();
 		//Get list of vectors of nearby neighbors
@@ -33,7 +33,7 @@ public class Player implements slather.sim.Player {
 
 			//Check distance between cell and neighboring cell. If greater than theshold, add vector
 //			if(myPosition.distance(otherPosition) < THRESHOLD_DISTANCE)
-				vectors.add(new Vector(myPosition, otherPosition));
+			vectors.add(new Vector(myPosition, otherPosition));
 		}
 		//Also get list of nearby pheremones
 //		for(Pherome p : nearby_pheromes) {
