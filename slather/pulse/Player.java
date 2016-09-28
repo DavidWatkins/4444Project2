@@ -1,4 +1,4 @@
-package slather.g1;
+package slather.pulse;
 
 import slather.sim.Cell;
 import slather.sim.Move;
@@ -13,7 +13,7 @@ public class Player implements slather.sim.Player {
 	private double distanceVisible;
 	private static final double MAXIMUM_MOVE = 1.0;
 	private static final double THRESHOLD_DISTANCE = 2.0;
-	private static final int THRESHOLD_CELLS = 4, CENTER_DIAMETER=5, MAX_CENTER_DIAMETER = 40;
+	private static final int THRESHOLD_CELLS = 4, CENTER_DIAMETER=10, MAX_CENTER_DIAMETER = 45;
 	private int side_length;
 	private Random gen;
 

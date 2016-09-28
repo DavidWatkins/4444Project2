@@ -1,4 +1,4 @@
-package slather.g1;
+package slather.hex;
 
 import slather.sim.Point;
 
