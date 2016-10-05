@@ -15,45 +15,39 @@ public class Player implements slather.sim.Player {
 	private static final double THRESHOLD_DISTANCE = 2.0;
 	private int side_length;
 	private Random gen;
-	private double angle;
 
 	public void init(double d, int t, int side_length) {
 		this.trailLength = t;
-		if (t > 256)
-			this.trailLength = 256;
-		if (t==0)
-			this.trailLength = 1;
 		this.distanceVisible = d;
 		this.side_length = side_length;
 		this.gen = new Random();
-		angle = 2*Math.PI/trailLength;
-		
 	}
 
 
 	public Move play(Cell player_cell, byte memory, Set<Cell> nearby_cells, Set<Pherome> nearby_pheromes) {
 		if (player_cell.getDiameter() >= 2) // reproduce whenever possible
-		return new Move(true, (byte)0, (byte)(trailLength/2));
+			return new Move(true, (byte)0, (byte)(trailLength/2));
 
-		boolean close = false;
-		for (Cell p: nearby_cells)
-			if (player_cell.getPosition().distance(p.getPosition()) > 0)
-				close = true;
-
-			if (close){
-				System.out.println("close");
-				return getVectorBasedMove(player_cell, nearby_cells, nearby_pheromes);
-			}
-			System.out.println("not close");
-			return hexagonMethod(player_cell, (int)memory);
+		Move hexMove = hexagonMethod(player_cell, (int)memory);
+		boolean enemies = false;
+		for (Pherome p: nearby_pheromes){
+			if (p.player != player_cell.player)
+				enemies = true;
+		}
+		if (!nearby_cells.isEmpty() || enemies || collides(player_cell, hexMove.vector, nearby_cells, nearby_pheromes))
+			return getVectorBasedMove(player_cell, memory, nearby_cells, nearby_pheromes);
+		return hexMove;
+			
 	}
 
 	public Move hexagonMethod(Cell player_cell, int polySide){
 		Point myPosition = player_cell.getPosition();
-		Point newPlace = new Point(myPosition.x+Math.cos(polySide*angle), myPosition.y+Math.sin(polySide*angle));
+		double angle = Math.abs(polySide*getAngle());
+		Point newPlace = new Point(myPosition.x+Math.cos(angle), myPosition.y+Math.sin(angle));
 
 		polySide = (polySide+1)%trailLength;
 		Vector v = getNormalizedVector(myPosition, newPlace, player_cell.getDiameter());
+		v.invert();
 
 	//Get final destination point
 		Point finalPoint = v.add(myPosition);
@@ -99,11 +93,15 @@ public class Player implements slather.sim.Player {
 		return vectors;
 	}
 
+	private double getAngle(){
+		return 2*Math.PI/trailLength;
+	}
+
 	private List<Vector> validHoneycombPositions() {
 		return null;
 	}
 
-	private Move getVectorBasedMove(Cell player_cell, Set<Cell> nearby_cells, Set<Pherome> nearby_pheromes) {
+	private Move getVectorBasedMove(Cell player_cell, byte memory, Set<Cell> nearby_cells, Set<Pherome> nearby_pheromes) {
 		Point myPosition = player_cell.getPosition();
 		List<Vector> vectors = getAllNeighborVectors(player_cell, nearby_cells, nearby_pheromes);
 
@@ -126,8 +124,31 @@ public class Player implements slather.sim.Player {
 		}
 
 	// if all tries fail, just chill in place
-		return new Move((new Vector(myPosition, finalPoint)).toPoint(), (byte)0);
+		return new Move((new Vector(myPosition, finalPoint)).toPoint(), switchDirection(memory));
 	}
 
+	private byte switchDirection(byte memory){
+		int side = (int) memory;
+		return (byte)(side*-1);
+	}
+
+//CODE FROM G0 COLLIDES METHOD
+	    // check if moving player_cell by vector collides with any nearby cell or hostile pherome
+	private boolean collides(Cell player_cell, Point vector, Set<Cell> nearby_cells, Set<Pherome> nearby_pheromes) {
+		Iterator<Cell> cell_it = nearby_cells.iterator();
+		Point destination = player_cell.getPosition().move(vector);
+		while (cell_it.hasNext()) {
+			Cell other = cell_it.next();
+			if ( destination.distance(other.getPosition()) < 0.5*player_cell.getDiameter() + 0.5*other.getDiameter() + 0.00011) 
+				return true;
+		}
+		Iterator<Pherome> pherome_it = nearby_pheromes.iterator();
+		while (pherome_it.hasNext()) {
+			Pherome other = pherome_it.next();
+			if (other.player != player_cell.player && destination.distance(other.getPosition()) < 0.5*player_cell.getDiameter() + 0.0001) 
+				return true;
+		}
+		return false;
+	}
 
 }
